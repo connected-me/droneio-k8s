@@ -4,8 +4,9 @@ Follow along at https://youtu.be/lRae2jJfuqA
 
 Or join me on Twitch, Tuesday-Thursday (2-5pm pacific) for homelab stuff fridays and randomly for gaming
 
-https://twitch.tv/attentiontoodetail
+https://twitch.tv/attentiontoodetail  
 
+Please note, the secrets are not included here, you have to work that bit out for yourself, but I've detailed what you need below.  
 
 # drone.io install doc:
 
