@@ -30,19 +30,17 @@ spec:
           subPath: root_ca.crt
           readOnly: false
         env:
+        - name: DRONE_JOB_NAMESPACE
+          value: dev-services
         - name: DRONE_DATABASE_DRIVER
           value: postgres
-        - name: DRONE_DB_HOST
-          value: <set your DB host here>
-        - name: DRONE_DB_PORT
-          value: <set your DB port here>
         - name: DRONE_DB_PASSWD
           valueFrom:
             secretKeyRef:
               name: droneio-psql
               key: secret
         - name: DRONE_DATABASE_DATASOURCE
-          value: "postgres://droneiodev:$(DRONE_DB_PASSWD)@$(DRONE_DB_HOST):$(DRONE_DB_HOST)/droneiodev?sslmode=disable"
+          value: "postgres://droneiodev:$(DRONE_DB_PASSWD)@media1.in.connected-me.com:5432/droneiodev?sslmode=disable"
         - name: DRONE_GITEA_CLIENT_ID
           valueFrom:
             secretKeyRef:
@@ -66,27 +64,6 @@ spec:
           value: droneio.1.dev.connected-me.com
         - name: DRONE_SERVER_PROTO
           value: https
-        securityContext:
-          allowPrivilegeEscalation: false
-          privileged: false
-          #readOnlyRootFilesystem: true
-        #added liveness tests
-        livenessProbe:
-          httpGet:
-            path: "/welcome"
-            port: 80
-          initialDelaySeconds: 90
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 5
-        readinessProbe:
-          httpGet:
-            path: "/welcome"
-            port: 80
-          initialDelaySeconds: 60
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
       volumes:
       - name: ca-pemstore
         configMap:
