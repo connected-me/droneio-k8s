@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: droneio-dev
+  name: droneio-dev
+  namespace: dev-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: droneio-dev
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: droneio-dev
+    spec:
+      containers:
+      - image: drone/drone:2
+        name: drone
+        ports:
+        - containerPort: 80
+        resources: {}
+        volumeMounts:
+        - name: ca-pemstore
+          mountPath: /etc/ssl/certs/root_ca.crt
+          subPath: root_ca.crt
+          readOnly: false
+        env:
+        - name: DRONE_JOB_NAMESPACE
+          value: dev-services
+        - name: DRONE_DATABASE_DRIVER
+          value: postgres
+        - name: DRONE_DB_PASSWD
+          valueFrom:
+            secretKeyRef:
+              name: droneio-psql
+              key: secret
+        - name: DRONE_DATABASE_DATASOURCE
+          value: "postgres://droneiodev:$(DRONE_DB_PASSWD)@media1.in.connected-me.com:5432/droneiodev?sslmode=disable"
+        - name: DRONE_GITEA_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: droneio
+              key: clientid
+        - name: DRONE_GITEA_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: droneio
+              key: secrat
+        - name: DRONE_GITEA_SERVER
+          value: https://gitea.1.dev.connected-me.com
+        - name: DRONE_GIT_ALWAYS_AUTH
+          value: "true"
+        - name: DRONE_RPC_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: droneio
+              key: rpc-secrat
+        - name: DRONE_SERVER_HOST
+          value: droneio.1.dev.connected-me.com
+        - name: DRONE_SERVER_PROTO
+          value: https
+      volumes:
+      - name: ca-pemstore
+        configMap:
+          name: ca-pemstore
+          items:
+            - key: root_ca.crt
+              path: root_ca.crt
+status: {}
